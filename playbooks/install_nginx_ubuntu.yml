@@ -5,6 +5,8 @@
       apt: pkg=nginx state=installed update_cache=true
       notify:
         - start nginx
+      become: true
+      become_user: root
 
   handlers:
     - name: start nginx
