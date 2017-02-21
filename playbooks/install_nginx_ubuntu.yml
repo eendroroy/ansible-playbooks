@@ -1,5 +1,5 @@
 ---
-- hosts: webservers
+- hosts: servers
   tasks:
     - name: Installs nginx
       apt: pkg=nginx state=installed update_cache=true

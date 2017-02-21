@@ -1,2 +1,2 @@
-[webservers]
-192.168.33.10 ansible_ssh_user=ubuntu
+[servers]
+192.168.33.10 ansible_ssh_user=vagrant
