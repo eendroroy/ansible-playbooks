@@ -28,7 +28,7 @@
     ruby_build_url: https://github.com/sstephenson/ruby-build.git
     ruby_build_path: '{{ rbenv_path }}/plugins/ruby-build'
     ruby: '{{ rbenv_path }}/shims/ruby'
-    ruby_version: 2.2.3
+    ruby_version: 2.3.3
     ruby_path: '{{ rbenv_path }}/versions/{{ ruby_version }}'
 
   tasks:
