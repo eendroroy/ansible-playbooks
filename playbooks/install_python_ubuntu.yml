@@ -1,8 +1,0 @@
----
-- hosts: servers
-  tasks:
-    - name: Installs python
-      apt: pkg=nginx state=installed update_cache=true
-      become: true
-      become_user: root
-
