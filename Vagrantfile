@@ -8,7 +8,7 @@ Vagrant.configure("2") do |config|
   # config.vm.network "public_network"
   # config.vm.synced_folder "../data", "/vagrant_data"
   config.vm.provider "virtualbox" do |vb|
-    vb.name = "ansible-playbooks-test-server"
+    vb.name = "ansible-test-server"
     vb.gui = false 
     vb.memory = 512
   end
