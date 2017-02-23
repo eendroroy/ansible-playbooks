@@ -50,7 +50,7 @@
         echo 'which rbenv > /dev/null && eval "$(rbenv init -)"' \
         >> /home/{{ remote_user }}/.bash_profile
     - name: 'install ruby {{ ruby_version }}'
-      shell: '{{ rbenv_path }}/bin/rbenv install {{ ruby_version }}'
+      shell: 'RUBY_CONFIGURE_OPTS=--disable-install-doc {{ rbenv_path }}/bin/rbenv install {{ ruby_version }}'
       when: check_ruby.stdout != ruby_version
     - name: 'set default ruby {{ ruby_version }}'
       shell: '{{ rbenv_path }}/bin/rbenv global {{ ruby_version }}'
