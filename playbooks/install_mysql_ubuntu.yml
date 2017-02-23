@@ -1,0 +1,32 @@
+---
+- name: Install MySQL on ubuntu server
+  hosts: servers
+  sudo: yes
+  remote_user: vagrant
+
+  vars:
+    mysql_root_password: root
+
+  tasks:
+  - name: Set MySQL root password before installing
+    debconf: name='mysql-server' question='mysql-server/root_password' value='{{mysql_root_password | quote}}' vtype='password'
+  - name: Confirm MySQL root password before installing
+    debconf: name='mysql-server' question='mysql-server/root_password_again' value='{{mysql_root_password | quote}}' vtype='password'
+  - name: Install MySQL
+    apt: package={{ item }} state=installed force=yes update_cache=yes cache_valid_time=3600
+    when: ansible_os_family == 'Debian'
+    with_items:
+      - mysql-server
+      - mysql-client
+      - python-mysqldb
+  - name: Deletes anonymous MySQL server user for localhost
+    mysql_user: user="" state="absent" login_password="{{ mysql_root_password }}" login_user=root
+  - name: Secures the MySQL root user
+    mysql_user: user="root" password="{{ mysql_root_password }}" host="{{ item }}" login_password="{{mysql_root_password}}" login_user=root
+    with_items:
+      - 127.0.0.1
+      - localhost
+      - ::1
+      - "{{ ansible_fqdn }}"
+  - name: Removes the MySQL test database
+    mysql_db: db=test state=absent login_password="{{ mysql_root_password }}" login_user=root
