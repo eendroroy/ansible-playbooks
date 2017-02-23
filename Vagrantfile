@@ -11,7 +11,6 @@ Vagrant.configure("2") do |config|
     vb.name = "ansible-playbooks-test-server"
     vb.gui = false 
     vb.memory = 512
-    vb.cpu = 2
   end
   config.vm.provision "shell", inline: <<-SHELL
     apt-get -y update
