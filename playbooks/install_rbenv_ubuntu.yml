@@ -1,25 +1,22 @@
 ---
 - hosts: servers
-  sudo: yes
   remote_user: vagrant
   gather_facts: no
   pre_tasks:
     - name: ''
+      become: true
       shell: "lsb_release -a 2>/dev/null | grep Codename | awk '{print $2}'"
       register: release
       ignore_errors: yes
     - name: 'update apt packages list'
-      raw: sudo apt-get update
-    - name: 'install python2'
-      raw: sudo apt-get -y install python-simplejson
+      apt:
+        update_cache: yes
+      become: true
+      become_method: sudo
+    - name: 'install python2 for xenial'
+      become: true
+      apt: name='python-simplejson' state=installed
       when: release.stdout == 'xenial'
-    - name: 'install git'
-      raw: sudo apt-get -y install git
-    - name: 'install gcc'
-      raw: sudo apt-get -y install gcc
-    - name: 'install ruby dependencies'
-      raw: sudo apt-get install -y libssl-dev libreadline-dev zlib1g-dev
-  sudo: no
 
   vars:
     remote_user: vagrant
@@ -27,11 +24,19 @@
     rbenv_path: '/home/{{ remote_user }}/.rbenv'
     ruby_build_url: https://github.com/sstephenson/ruby-build.git
     ruby_build_path: '{{ rbenv_path }}/plugins/ruby-build'
-    ruby: '{{ rbenv_path }}/shims/ruby'
     ruby_version: 2.3.3
-    ruby_path: '{{ rbenv_path }}/versions/{{ ruby_version }}'
 
   tasks:
+    - name: 'install dependencies'
+      apt: name={{item}} state=installed
+      with_items:
+          - git
+          - gcc
+          - libssl-dev 
+          - libreadline-dev
+          - zlib1g-dev
+      become: true
+      become_method: sudo
     - shell: 'ls {{ rbenv_path }}/versions | grep {{ ruby_version }}'
       register: check_ruby
       ignore_errors: yes
