@@ -3,3 +3,4 @@
 **/*.retry
 .python-version
 /tmp
+/log
