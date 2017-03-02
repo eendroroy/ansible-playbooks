@@ -1,0 +1,14 @@
+- name: determine release
+  shell: "lsb_release -a 2>/dev/null | grep Codename | awk '{print $2}'"
+  register: release
+  ignore_errors: yes
+  become: true
+- name: 'update apt packages list'
+  apt:
+    update_cache: yes
+  become: true
+  become_method: sudo
+- name: 'install python2 for xenial'
+  become: true
+  apt: name='python-simplejson' state=installed
+  when: release.stdout == 'xenial'

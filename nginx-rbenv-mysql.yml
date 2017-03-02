@@ -1,0 +1,20 @@
+---
+- hosts: servers
+  remote_user: vagrant
+
+  tasks:
+    - include: 'tasks/pretasks.yml'
+      gather_facts: no
+
+    - include: 'tasks/install_mysql_ubuntu.yml'
+      vars:
+        mysql_root_password: root
+    
+    - include: 'tasks/install_rbenv_ubuntu.yml'
+      vars:
+        remote_user: vagrant
+        rbenv_url: https://github.com/sstephenson/rbenv.git
+        rbenv_path: '/home/{{ remote_user }}/.rbenv'
+        ruby_build_url: https://github.com/sstephenson/ruby-build.git
+        ruby_build_path: '{{ rbenv_path }}/plugins/ruby-build'
+        ruby_version: 2.3.3
