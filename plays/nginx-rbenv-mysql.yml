@@ -4,7 +4,8 @@
 
   tasks:
     - include: 'tasks/pretasks.yml'
-      gather_facts: no
+      vars:
+        gather_facts: no
 
     - include: 'tasks/install_mysql_ubuntu.yml'
       vars:
