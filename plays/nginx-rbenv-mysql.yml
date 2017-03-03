@@ -7,6 +7,8 @@
       vars:
         gather_facts: no
 
+    - include: 'tasks/install_nginx_ubuntu.yml'
+
     - include: 'tasks/install_mysql_ubuntu.yml'
       vars:
         mysql_root_password: root
