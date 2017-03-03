@@ -6,6 +6,7 @@
       - libssl-dev 
       - libreadline-dev
       - zlib1g-dev
+      - make
   become: true
   become_method: sudo
 - shell: 'ls {{ nodenv_path }}/versions | grep {{ node_version }}'
@@ -13,6 +14,8 @@
   ignore_errors: yes
 - name: 'clone nodenv'
   git: repo={{ nodenv_url }} dest={{ nodenv_path }} accept_hostkey=yes
+- name: 'compile dynamic bash extension to speed up nodenv'
+  shell: 'cd ~/.nodenv && src/configure && make -C src'
 - name: 'clone node-build'
   git: repo={{ node_build_url }} dest={{ node_build_path }}
 - name: Add nodenv to PATH
