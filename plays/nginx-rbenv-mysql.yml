@@ -21,3 +21,12 @@
         ruby_build_url: https://github.com/sstephenson/ruby-build.git
         ruby_build_path: '{{ rbenv_path }}/plugins/ruby-build'
         ruby_version: 2.4.0
+    
+    - include: 'tasks/install_nodenv_ubuntu.yml'
+      vars:
+        remote_user: vagrant
+        nodenv_url: https://github.com/nodenv/nodenv.git
+        nodenv_path: '/home/{{ remote_user }}/.nodenv'
+        node_build_url: https://github.com/nodenv/node-build.git
+        node_build_path: '{{ nodenv_path }}/plugins/node-build'
+        node_version: 7.7.0

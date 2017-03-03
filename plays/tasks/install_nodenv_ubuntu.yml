@@ -1,0 +1,32 @@
+- name: 'install dependencies'
+  apt: name={{item}} state=installed
+  with_items:
+      - git
+      - gcc
+      - libssl-dev 
+      - libreadline-dev
+      - zlib1g-dev
+  become: true
+  become_method: sudo
+- shell: 'ls {{ nodenv_path }}/versions | grep {{ node_version }}'
+  register: check_node
+  ignore_errors: yes
+- name: 'clone nodenv'
+  git: repo={{ nodenv_url }} dest={{ nodenv_path }} accept_hostkey=yes
+- name: 'clone node-build'
+  git: repo={{ node_build_url }} dest={{ node_build_path }}
+- name: Add nodenv to PATH
+  lineinfile: 
+    dest: /home/{{ remote_user }}/.bash_profile
+    regexp: '^export.*nodenv/bin'
+    line: export PATH="$HOME/.nodenv/bin:$HOME/.nodenv/shims:$PATH"    
+- name: Install nodenv shims
+  lineinfile: 
+    dest: /home/{{ remote_user }}/.bash_profile
+    regexp: '^eval.*nodenv init'
+    line: 'eval "$(nodenv init -)"'
+- name: 'install node {{ node_version }}'
+  shell: '{{ nodenv_path }}/bin/nodenv install {{ node_version }}'
+  when: check_node.stdout != node_version
+- name: 'set default node {{ node_version }}'
+  shell: '{{ nodenv_path }}/bin/nodenv global {{ node_version }}'
