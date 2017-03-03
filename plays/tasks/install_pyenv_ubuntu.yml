@@ -30,5 +30,8 @@
 - name: 'install python {{ python_version }}'
   shell: '{{ pyenv_path }}/bin/pyenv install {{ python_version }}'
   when: check_python.stdout != python_version
+- name: 'rehash python installations'
+  shell: '{{ pyenv_path }}/bin/pyenv rehash'
+  when: check_python.stdout != python_version
 - name: 'set default python {{ python_version }}'
   shell: '{{ pyenv_path }}/bin/pyenv global {{ python_version }}'

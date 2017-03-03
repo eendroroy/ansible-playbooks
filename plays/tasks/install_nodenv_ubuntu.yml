@@ -31,5 +31,8 @@
 - name: 'install node {{ node_version }}'
   shell: '{{ nodenv_path }}/bin/nodenv install {{ node_version }}'
   when: check_node.stdout != node_version
+- name: 'rehash node installations'
+  shell: '{{ nodenv_path }}/bin/nodenv rehash'
+  when: check_node.stdout != node_version
 - name: 'set default node {{ node_version }}'
   shell: '{{ nodenv_path }}/bin/nodenv global {{ node_version }}'
