@@ -2,5 +2,6 @@
 **/*.log
 **/*.retry
 .python-version
-/tmp
-/log
+tmp/*
+log/*
+!log/.gitkeep
