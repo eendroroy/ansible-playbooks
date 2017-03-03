@@ -20,4 +20,4 @@
         rbenv_path: '/home/{{ remote_user }}/.rbenv'
         ruby_build_url: https://github.com/sstephenson/ruby-build.git
         ruby_build_path: '{{ rbenv_path }}/plugins/ruby-build'
-        ruby_version: 2.3.3
+        ruby_version: 2.4.0
