@@ -17,11 +17,16 @@
   ignore_errors: yes
 - name: 'clone pyenv'
   git: repo={{ pyenv_url }} dest={{ pyenv_path }} accept_hostkey=yes
-- name: 'update bashrc'
-  shell: echo 'export PATH="$HOME/.pyenv/bin:$HOME/.pyenv/shims:$PATH"' \
-    >> /home/{{ remote_user }}/.bash_profile && \
-    echo 'which pyenv > /dev/null && eval "$(pyenv init -)"' \
-    >> /home/{{ remote_user }}/.bash_profile
+- name: Add pyenv to PATH
+  lineinfile: 
+    dest: /home/{{ remote_user }}/.bash_profile
+    regexp: '^export.*pyenv/bin'
+    line: export PATH="$HOME/.pyenv/bin:$HOME/.pyenv/shims:$PATH"    
+- name: Install pyenv shims
+  lineinfile: 
+    dest: /home/{{ remote_user }}/.bash_profile
+    regexp: '^eval.*pyenv init'
+    line: 'eval "$(pyenv init -)"'
 - name: 'install python {{ python_version }}'
   shell: '{{ pyenv_path }}/bin/pyenv install {{ python_version }}'
   when: check_python.stdout != python_version

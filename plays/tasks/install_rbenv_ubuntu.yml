@@ -15,11 +15,16 @@
   git: repo={{ rbenv_url }} dest={{ rbenv_path }} accept_hostkey=yes
 - name: 'clone ruby-build'
   git: repo={{ ruby_build_url }} dest={{ ruby_build_path }}
-- name: 'update bashrc'
-  shell: echo 'export PATH="$HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH"' \
-    >> /home/{{ remote_user }}/.bash_profile && \
-    echo 'which rbenv > /dev/null && eval "$(rbenv init -)"' \
-    >> /home/{{ remote_user }}/.bash_profile
+- name: Add rbenv to PATH
+  lineinfile: 
+    dest: /home/{{ remote_user }}/.bash_profile
+    regexp: '^export.*rbenv/bin'
+    line: export PATH="$HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH"    
+- name: Install rbenv shims
+  lineinfile: 
+    dest: /home/{{ remote_user }}/.bash_profile
+    regexp: '^eval.*rbenv init'
+    line: 'eval "$(rbenv init -)"'
 - name: 'install ruby {{ ruby_version }}'
   shell: 'RUBY_CONFIGURE_OPTS=--disable-install-doc {{ rbenv_path }}/bin/rbenv install {{ ruby_version }}'
   when: check_ruby.stdout != ruby_version
