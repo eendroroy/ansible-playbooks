@@ -2,8 +2,10 @@
   shell: "lsb_release -a 2>/dev/null | grep Codename | awk '{print $2}'"
   register: release
   ignore_errors: yes
-  become: true
+- debug:
+    var: release
 - name: 'install python2 for xenial'
   become: true
   apt: name='python-simplejson' state=installed update_cache=yes cache_valid_time=3600
   when: release.stdout == 'xenial'
+
