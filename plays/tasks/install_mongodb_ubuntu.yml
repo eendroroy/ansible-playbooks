@@ -1,0 +1,16 @@
+- name: Add mongo ppa key
+  become: true
+  apt_key: >
+    keyserver=hkp://keyserver.ubuntu.com:80
+    id=0C49F3730359A14518585931BC711F9BA15703C6
+    state=present
+- name: Add mongo sources list
+  become: true
+  lineinfile: >
+    line="deb [ arch=amd64 ] http://repo.mongodb.org/apt/ubuntu {{release.stdout}}/mongodb-org/3.4 multiverse"
+    dest=/etc/apt/sources.list.d/mongodb.list
+    state=present
+    create=yes
+- name: Install mongo
+  become: true
+  apt: name=mongodb-org state=latest update_cache=yes
