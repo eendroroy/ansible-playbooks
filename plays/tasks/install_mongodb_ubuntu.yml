@@ -13,4 +13,4 @@
     create=yes
 - name: Install mongo
   become: true
-  apt: name=mongodb-org state=latest update_cache=yes
+  apt: name=mongodb-org state=latest update_cache=yes cache_valid_time=3600

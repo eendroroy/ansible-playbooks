@@ -5,5 +5,5 @@
   become: true
 - name: 'install python2 for xenial'
   become: true
-  apt: name='python-simplejson' state=installed update_cache=yes
+  apt: name='python-simplejson' state=installed update_cache=yes cache_valid_time=3600
   when: release.stdout == 'xenial'

@@ -3,7 +3,7 @@
   ignore_errors: True
   register: pyenv_exists
 - name: pyenv | install dependencies
-  apt: name={{item}} state=installed
+  apt: name={{item}} state=installed update_cache=yes cache_valid_time=3600
   with_items:
       - git
       - gcc
