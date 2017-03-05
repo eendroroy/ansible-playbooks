@@ -1,0 +1,25 @@
+---
+- hosts: servers
+  remote_user: vagrant
+
+  tasks:
+    - include: 'tasks/pretasks.yml'
+      vars:
+        gather_facts: no
+
+    - include: 'tasks/install_mongodb_ubuntu.yml'
+      vars:
+        remote_user: vagrant
+
+    - include: 'tasks/install_nginx_ubuntu.yml'
+
+    - include: 'tasks/install_mysql_ubuntu.yml'
+      vars:
+        mysql_root_password: root
+
+    - include: 'tasks/install_pyenv_ubuntu.yml'
+      vars:
+        remote_user: vagrant
+        pyenv_url: https://github.com/yyuu/pyenv.git
+        pyenv_path: '/home/{{ remote_user }}/.pyenv'
+        python_version: 3.6.0
