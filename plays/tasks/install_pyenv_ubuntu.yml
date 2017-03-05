@@ -26,12 +26,12 @@
   when: pyenv_exists.failed == true
 - name: pyenv | Add pyenv to PATH
   lineinfile: 
-    dest: /home/{{ remote_user }}/.bash_profile
+    dest: /home/{{ remote_user }}/.profile
     regexp: '^export.*pyenv/bin'
     line: export PATH="$HOME/.pyenv/bin:$HOME/.pyenv/shims:$PATH"    
 - name: pyenv | Install pyenv shims
   lineinfile: 
-    dest: /home/{{ remote_user }}/.bash_profile
+    dest: /home/{{ remote_user }}/.profile
     regexp: '^eval.*pyenv init'
     line: 'eval "$(pyenv init -)"'
 - name: pyenv | Install python {{ python_version }}
