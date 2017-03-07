@@ -54,4 +54,12 @@
     state=absent 
     login_password="{{ mysql_root_password }}" 
     login_user=root
-  notify: restart mysql
+
+- name: Create Mysql configuration file
+  template: src=my.cnf.j2 dest=/etc/my.cnf
+  become: true
+  notify:
+  - restart mysql
+
+- name: Start Mysql Service
+  service: name=mysql state=started enabled=yes

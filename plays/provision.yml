@@ -1,7 +1,6 @@
 ---
 - name: Install nginx mysql rbenv pyenv nodenv
   hosts: servers
-  remote_user: vagrant
 
   roles:
     - common

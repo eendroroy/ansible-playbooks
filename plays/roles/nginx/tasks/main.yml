@@ -8,6 +8,7 @@
   when: ansible_os_family == 'Debian'
   with_items:
     - nginx
+  become: true
 
 - name: Copy nginx configuration
   template: src=default.conf dest=/etc/nginx/conf.d/default.conf

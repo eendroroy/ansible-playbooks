@@ -1,4 +1,9 @@
-- name: install dependencies
+- name: Check for previous installation
+  shell: '[ -d {{ rbenv_path }} ] && [ -d {{ ruby_build_path }} ] && echo true'
+  ignore_errors: true
+  register: rvenv_exists
+
+- name: Install dependencies
   apt: >
     name={{item}} 
     state=installed 
@@ -11,16 +16,20 @@
       - libssl-dev 
       - libreadline-dev
       - zlib1g-dev
+  become: true
+  when: rvenv_exists.stdout != "true"
 
 - shell: ls {{ rbenv_path }}/versions | grep {{ ruby_version }}
   register: check_ruby
   ignore_errors: yes
 
-- name: clone rbenv
+- name: Clone rbenv
   git: repo={{ rbenv_url }} dest={{ rbenv_path }} accept_hostkey=yes
+  when: rvenv_exists.stdout != "true"
 
-- name: clone ruby-build
+- name: Clone ruby-build
   git: repo={{ ruby_build_url }} dest={{ ruby_build_path }}
+  when: rvenv_exists.stdout != "true"
 
 - name: Add rbenv to PATH
   lineinfile: 
@@ -34,15 +43,15 @@
     regexp: ^eval.*rbenv init
     line: eval "$(rbenv init -)"
 
-- name: install ruby {{ ruby_version }}
+- name: Install ruby {{ ruby_version }}
   shell: >
     RUBY_CONFIGURE_OPTS=--disable-install-doc 
     {{ rbenv_path }}/bin/rbenv install {{ ruby_version }}
   when: check_ruby.stdout != ruby_version
 
-- name: rehash ruby installations
-  shell: {{ rbenv_path }}/bin/rbenv rehash
+- name: Rehash ruby installations
+  shell: '{{ rbenv_path }}/bin/rbenv rehash'
   when: check_ruby.stdout != ruby_version
 
-- name: set default ruby {{ ruby_version }}
-  shell: {{ rbenv_path }}/bin/rbenv global {{ ruby_version }}
+- name: Set default ruby {{ ruby_version }}
+  shell: '{{ rbenv_path }}/bin/rbenv global {{ ruby_version }}'
