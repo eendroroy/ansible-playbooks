@@ -1,21 +1,9 @@
-mysql_root_password: root
-
 remote_user: vagrant
 
-rbenv_url: https://github.com/sstephenson/rbenv.git
-rbenv_path: '/home/{{ remote_user }}/.rbenv'
-ruby_build_url: https://github.com/sstephenson/ruby-build.git
-ruby_build_path: '{{ rbenv_path }}/plugins/ruby-build'
+mysql_root_password: root
+
 ruby_version: 2.4.0
-
-pyenv_url: https://github.com/yyuu/pyenv.git
-pyenv_path: '/home/{{ remote_user }}/.pyenv'
 python_version: 3.6.0
-
-nodenv_url: https://github.com/nodenv/nodenv.git
-nodenv_path: '/home/{{ remote_user }}/.nodenv'
-node_build_url: https://github.com/nodenv/node-build.git
-node_build_path: '{{ nodenv_path }}/plugins/node-build'
 node_version: 7.7.1
 
 server_hostname: local.host
