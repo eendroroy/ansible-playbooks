@@ -1,0 +1,48 @@
+- name: install dependencies
+  apt: >
+    name={{item}} 
+    state=installed 
+    force=yes
+    update_cache=yes 
+    cache_valid_time=3600
+  with_items:
+      - git
+      - gcc
+      - libssl-dev 
+      - libreadline-dev
+      - zlib1g-dev
+
+- shell: ls {{ rbenv_path }}/versions | grep {{ ruby_version }}
+  register: check_ruby
+  ignore_errors: yes
+
+- name: clone rbenv
+  git: repo={{ rbenv_url }} dest={{ rbenv_path }} accept_hostkey=yes
+
+- name: clone ruby-build
+  git: repo={{ ruby_build_url }} dest={{ ruby_build_path }}
+
+- name: Add rbenv to PATH
+  lineinfile: 
+    dest: /home/{{ remote_user }}/.profile
+    regexp: ^export.*rbenv/bin
+    line: export PATH="$HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH"    
+
+- name: Install rbenv shims
+  lineinfile: 
+    dest: /home/{{ remote_user }}/.profile
+    regexp: ^eval.*rbenv init
+    line: eval "$(rbenv init -)"
+
+- name: install ruby {{ ruby_version }}
+  shell: >
+    RUBY_CONFIGURE_OPTS=--disable-install-doc 
+    {{ rbenv_path }}/bin/rbenv install {{ ruby_version }}
+  when: check_ruby.stdout != ruby_version
+
+- name: rehash ruby installations
+  shell: {{ rbenv_path }}/bin/rbenv rehash
+  when: check_ruby.stdout != ruby_version
+
+- name: set default ruby {{ ruby_version }}
+  shell: {{ rbenv_path }}/bin/rbenv global {{ ruby_version }}

@@ -1,9 +1,14 @@
 - name: pyenv | Check for previous installation
-  shell: "[ -f ~/.pyenv ]"
+  shell: [ -f ~/.pyenv ]
   ignore_errors: True
   register: pyenv_exists
+
 - name: pyenv | install dependencies
-  apt: name={{item}} state=installed update_cache=yes cache_valid_time=3600
+  apt: >
+    name={{item}} 
+    state=installed 
+    update_cache=yes 
+    cache_valid_time=3600
   with_items:
       - git
       - gcc
@@ -14,31 +19,36 @@
       - checkinstall
       - tk-dev
       - libbz2-dev
-  become: true
-  become_method: sudo
   when: pyenv_exists.failed == true
+
 - name: pyenv | check {{ python_version }}
-  shell: 'ls {{ pyenv_path }}/versions | grep {{ python_version }}'
+  shell: ls {{ pyenv_path }}/versions | grep {{ python_version }}
   register: check_python
   ignore_errors: yes
+
 - name: pyenv | Clone pyenv
   git: repo={{ pyenv_url }} dest={{ pyenv_path }} accept_hostkey=yes
   when: pyenv_exists.failed == true
+
 - name: pyenv | Add pyenv to PATH
   lineinfile: 
     dest: /home/{{ remote_user }}/.profile
-    regexp: '^export.*pyenv/bin'
+    regexp: ^export.*pyenv/bin
     line: export PATH="$HOME/.pyenv/bin:$HOME/.pyenv/shims:$PATH"    
+
 - name: pyenv | Install pyenv shims
   lineinfile: 
     dest: /home/{{ remote_user }}/.profile
-    regexp: '^eval.*pyenv init'
-    line: 'eval "$(pyenv init -)"'
+    regexp: ^eval.*pyenv init
+    line: eval "$(pyenv init -)"
+
 - name: pyenv | Install python {{ python_version }}
-  shell: '{{ pyenv_path }}/bin/pyenv install {{ python_version }}'
+  shell: {{ pyenv_path }}/bin/pyenv install {{ python_version }}
   when: check_python.stdout != python_version
+
 - name: pyenv | Rehash python installations
-  shell: '{{ pyenv_path }}/bin/pyenv rehash'
+  shell: {{ pyenv_path }}/bin/pyenv rehash
   when: check_python.stdout != python_version
+
 - name: pyenv | Set default python {{ python_version }}
-  shell: '{{ pyenv_path }}/bin/pyenv global {{ python_version }}'
+  shell: {{ pyenv_path }}/bin/pyenv global {{ python_version }}
