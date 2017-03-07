@@ -12,6 +12,6 @@ nodenv_url: https://github.com/nodenv/nodenv.git
 nodenv_path: '/home/{{ remote_user }}/.nodenv'
 node_build_url: https://github.com/nodenv/node-build.git
 node_build_path: '{{ nodenv_path }}/plugins/node-build'
-node_version: 7.7.0
+node_version: 7.7.1
 
 server_hostname: local.host
