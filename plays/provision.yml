@@ -1,5 +1,5 @@
 ---
-- name: Install nginx mysql rbenv nodenv
+- name: Install nginx mysql rbenv pyenv nodenv
   hosts: servers
   remote_user: vagrant
 
@@ -8,4 +8,5 @@
     - nginx
     - mysql
     - rbenv
+    - pyenv
     - nodenv
