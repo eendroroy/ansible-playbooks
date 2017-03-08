@@ -1,9 +1,15 @@
 ---
+- name: Setup before gathering facts
+  hosts: servers
+  gather_facts: no
+
+  roles:
+    - setup
+
 - name: Install nginx mysql rbenv pyenv nodenv
   hosts: servers
 
   roles:
-    - common
     - nginx
     - mysql
     - rbenv

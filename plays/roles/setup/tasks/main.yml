@@ -1,0 +1,25 @@
+- name: Determine release
+  raw: lsb_release -a 2>/dev/null | grep Codename | awk '{printf("%s"), $2}'
+  register: release
+  ignore_errors: yes
+
+- debug:
+    var: release.stdout
+
+- name: Update apt cache
+  raw: apt-get -y update
+  become: true
+
+- name: Upgrade packages
+  raw: apt-get -y dist-upgrade
+  become: true
+
+- name: Cleanup apt
+  raw: apt-get -y autoremove && apt-get -y clean
+  become: true
+
+- name: Install python2 for xenial
+  raw: apt-get install -y --force-yes python-simplejson
+  when: release.stdout == 'xenial'
+  become: true
+
