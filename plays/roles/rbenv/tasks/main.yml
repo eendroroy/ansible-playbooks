@@ -19,7 +19,8 @@
   become: true
   when: rvenv_exists.stdout != "true"
 
-- shell: ls {{ rbenv_path }}/versions | grep {{ ruby_version }}
+- name: Check for {{ ruby_version }}
+  shell: ls {{ rbenv_path }}/versions | grep {{ ruby_version }}
   register: check_ruby
   ignore_errors: yes
 

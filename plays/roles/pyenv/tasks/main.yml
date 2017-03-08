@@ -22,7 +22,7 @@
   become: true
   when: pyenv_exists.stdout != "true"
 
-- name: Check {{ python_version }}
+- name: Check for {{ python_version }}
   shell: ls {{ pyenv_path }}/versions | grep {{ python_version }}
   register: check_python
   ignore_errors: yes

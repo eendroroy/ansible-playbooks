@@ -15,7 +15,8 @@
   become: true
   when: nodenv_exists.stdout != "true"
 
-- shell: ls {{ nodenv_path }}/versions | grep {{ node_version }}
+- name: Check for {{ node_version }}
+  shell: ls {{ nodenv_path }}/versions | grep {{ node_version }}
   register: check_node
   ignore_errors: yes
 
