@@ -10,8 +10,6 @@
   hosts: servers
 
   roles:
-    - nginx
-    - mysql
     - rbenv
     - pyenv
     - nodenv
