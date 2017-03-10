@@ -6,6 +6,7 @@
     force=yes 
     mode=755
   tags: puma
+  become: true
 
 - name: Add puma config
   template: >
@@ -14,6 +15,7 @@
     force=yes 
     mode=755
   tags: puma
+  become: true
 
 - name: Add puma init script
   template: >
@@ -22,6 +24,7 @@
     force=yes 
     mode=755
   tags: puma
+  become: true
 
 - name: Add puma shared/config
   template: >
@@ -30,6 +33,7 @@
     force=yes 
     mode=755
   tags: puma
+  become: true
 
 - name: Make shared/tmp/sockets
   file: >
@@ -38,6 +42,7 @@
     owner={{ remote_user }} 
     state=directory
   tags: tmp
+  become: true
 
 - name: Restart puma-manager
   action: service name=puma-manager state=restarted

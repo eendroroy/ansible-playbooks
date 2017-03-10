@@ -10,9 +10,9 @@
   hosts: servers
 
   roles:
+    - rails
     - nginx
     - puma
     - mysql
     - rbenv
     - nodenv
-    - rails

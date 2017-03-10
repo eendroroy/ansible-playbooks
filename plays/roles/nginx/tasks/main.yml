@@ -17,12 +17,15 @@
 
 - name: Remove the default app
   command: rm -rf /etc/nginx/sites-enabled/default
+  become: true
 
 - name: Remove the app's config, if exists
   command: rm -rf /etc/nginx/sites-enabled/default
+  become: true
 
 - name: Remove the app's symlink, if exists
   command: rm -rf /etc/nginx/sites-enabled/{{app_name}}
+  become: true
 
 - name: Configure nginx for the app
   template: >
@@ -31,12 +34,15 @@
     group=www-data 
     owner=www-data 
     force=yes
+  become: true
 
 - name: Enable the app
   command: >
     ln -s /etc/nginx/sites-available/{{app_name}} 
     /etc/nginx/sites-enabled/{{app_name}}
+  become: true
   notify: restart nginx
 
 - name: Restart nginx
   action: service name=nginx state=restarted
+  become: true

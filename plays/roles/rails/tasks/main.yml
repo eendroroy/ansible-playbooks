@@ -1,5 +1,6 @@
 - name: Create deployment user
   user: name=deploy comment="Application deployment user"
+  become: true
 
 - name: Create deployment directory
   file: >
@@ -7,6 +8,7 @@
     owner=deploy 
     group=deploy 
     state=directory
+  become: true
 
 - name: Make shared directories
   file: >
@@ -25,12 +27,11 @@
     - config
     - config/puma
   tags: shared
+  become: true
 
 - name: Create database.yml
   template: >
     src=database.yml.j2 
     dest={{deploy_directory}}/shared/config/database.yml 
     force=yes mode=755 owner=deploy
-
-- name: Install Bundler
-  command: gem install bundler
+  become: true

@@ -7,7 +7,7 @@ server {
   listen 80;
 
   gzip_types text/plain text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript application/json;                                                                      
-  server_name {{ webserver_name }};
+  server_name {{ server_hostname }};
   root {{ deploy_directory }}/current/public;
 
   location / {
