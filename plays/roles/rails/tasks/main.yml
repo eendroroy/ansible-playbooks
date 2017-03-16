@@ -1,20 +1,20 @@
 - name: Create deployment user
-  user: name=deploy comment="Application deployment user"
+  user: name={{ deploy_user }} comment="Application deployment user"
   become: true
 
 - name: Create deployment directory
   file: >
     path={{deploy_directory}} 
-    owner=deploy 
-    group=deploy 
+    owner={{ deploy_user }}
+    group={{ deploy_user }}
     state=directory
   become: true
 
 - name: Make shared directories
   file: >
     path={{deploy_directory}}/shared/{{item}} 
-    group=deploy 
-    owner=deploy 
+    group={{ deploy_user }}
+    owner={{ deploy_user }}
     state=directory
   with_items:
     - tmp
@@ -33,5 +33,5 @@
   template: >
     src=database.yml.j2 
     dest={{deploy_directory}}/shared/config/database.yml 
-    force=yes mode=755 owner=deploy
+    force=yes mode=755 owner={{ deploy_user }}
   become: true
