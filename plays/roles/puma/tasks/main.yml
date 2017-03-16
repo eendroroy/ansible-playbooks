@@ -8,6 +8,14 @@
   tags: puma
   become: true
 
+- name: Add puma service
+  template: >
+    src=puma.service.j2
+    dest=/etc/systemd/system/puma.service
+    force=yes
+    mode=755
+  become: true
+
 - name: Add puma config
   template: >
     src=etc_puma.conf.j2 
@@ -25,6 +33,11 @@
     mode=755
   tags: puma
   become: true
+
+- name: Create shared/config/puma
+  file: >
+    path={{deploy_directory}}/shared/config/puma
+    state=directory
 
 - name: Add puma shared/config
   template: >
