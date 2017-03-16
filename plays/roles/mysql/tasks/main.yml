@@ -30,9 +30,9 @@
 
 - name: Deletes anonymous MySQL server user for localhost
   mysql_user: >
-    user="" 
-    state="absent" 
-    login_password="{{ mysql_root_password }}" 
+    user=""
+    state="absent"
+    login_password="{{ mysql_root_password }}"
     login_user=root
 
 - name: Secures the MySQL root user
