@@ -15,5 +15,5 @@
     - rbenv
     - nodenv
     - pyenv
-    # - rails
+    - rails
     # - puma 
