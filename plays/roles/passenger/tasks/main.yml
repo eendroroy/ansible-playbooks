@@ -1,0 +1,49 @@
+---
+- name: Add Phusion Passenger repo key
+  apt_key: url=http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0x561F9B9CAC40B2F7 state=present
+  become: true
+
+- name: Install packages to enable apt over HTTPS
+  apt: >
+    package={{ item }} 
+    state=installed 
+    force=yes 
+    update_cache=yes 
+    cache_valid_time=3600
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+  become: true
+
+- name: Add Phusion Passenger repo
+  apt_repository: repo='deb https://oss-binaries.phusionpassenger.com/apt/passenger xenial main'
+  become: true
+
+- name: Install nginx-extras and passenger
+  apt: >
+    package={{ item }} 
+    state=installed 
+    force=yes 
+    update_cache=yes 
+    cache_valid_time=3600
+  with_items:
+    - nginx-extras
+    - passenger
+  become: true
+
+- name: Remove the default nginx app's config
+  file: path=/etc/nginx/sites-available/default state=absent
+  become: true
+
+- name: Remove the default nginx app's symlink if it exists
+  file: path=/etc/nginx/sites-enabled/default state=absent
+  become: true
+
+- name: Copy nginx.conf
+  template: src=nginx.conf.j2 dest=/etc/nginx/nginx.conf
+  become: true
+
+- name: Start nginx
+  service: name=nginx state=started
+  become: true
+
