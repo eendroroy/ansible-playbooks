@@ -10,6 +10,22 @@
     - nginx
   become: true
 
+- name: Stat index
+  stat: path=/var/www/html/index.nginx-debian.html
+  register: index_stat
+
+- name: Rename index.ubuntu-dedian.html to index.html
+  command: mv /var/www/html/index.nginx-debian.html /var/www/html/index.html
+  become: true
+  when: index_stat.stat.exists == true
+
+- name: Change owner
+  file: >
+    dest=/var/www/html
+    state=directory
+    owner={{ deploy_user }}
+  become: true
+
 - name: Copy nginx configuration
   template: >
     src=default.conf
