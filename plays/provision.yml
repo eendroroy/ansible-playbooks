@@ -6,7 +6,7 @@
   roles:
     - setup
 
-- name: Install nginx mysql rbenv pyenv nodenv
+- name: Setup Servers
   hosts: servers
 
   roles:
