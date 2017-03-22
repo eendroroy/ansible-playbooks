@@ -4,6 +4,6 @@ ruby_version: 2.4.0
 python_version: 3.6.0
 node_version: 7.7.1
 
-app_name: application
-deploy_directory: /data/{{app_name}}
-deploy_user: deploy
+app_name: ifc-staging
+deploy_directory: /var/www/apps/{{app_name}}
+deploy_user: deployer
