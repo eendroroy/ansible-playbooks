@@ -8,14 +8,17 @@
 
 - name: Update apt cache
   raw: apt-get -y update
+  when: release.stdout == 'xenial'
   become: true
 
 - name: Upgrade packages
   raw: apt-get -y dist-upgrade
+  when: release.stdout == 'xenial'
   become: true
 
 - name: Cleanup apt
   raw: apt-get -y autoremove && apt-get -y clean
+  when: release.stdout == 'xenial'
   become: true
 
 - name: Install python2 for xenial
