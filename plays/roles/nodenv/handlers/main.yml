@@ -1,0 +1,2 @@
+- name: rehash
+  shell: '{{ nodenv_path }}/bin/nodenv rehash'

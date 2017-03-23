@@ -3,18 +3,17 @@
   ignore_errors: true
   register: nodenv_exists
 
-- name: Install dependencies
-  apt: name={{item}} state=installed update_cache=yes cache_valid_time=3600
-  with_items:
-      - make
-      - git
-      - gcc
-      - libssl-dev 
-      - libreadline-dev
-      - zlib1g-dev
-      - make
+- name: Create base directory
+  file: >
+    path={{ nodenv_path }}
+    state=directory
+    group={{ deploy_user }}
+    owner={{ remote_user }}
   become: true
-  when: nodenv_exists.stdout != "true"
+
+- include: debian/dependencies.yml
+
+- include: centos/dependencies.yml
 
 - name: Check for {{ node_version }}
   shell: ls {{ nodenv_path }}/versions | grep {{ node_version }}
@@ -26,7 +25,7 @@
   when: nodenv_exists.stdout != "true"
 
 - name: Compile dynamic bash extension to speed up nodenv
-  shell: cd ~/.nodenv && src/configure && make -C src
+  shell: cd {{ nodenv_path }} && src/configure && make -C src
   when: nodenv_exists.stdout != "true"
 
 - name: Clone node-build
@@ -34,16 +33,11 @@
   when: nodenv_exists.stdout != "true"
 
 - name: Add nodenv to PATH
-  lineinfile: 
-    dest: /home/{{ remote_user }}/.profile
-    regexp: ^export.*nodenv/bin
-    line: export PATH="$HOME/.nodenv/bin:$HOME/.nodenv/shims:$PATH"    
-
-- name: Install nodenv shims
-  lineinfile: 
-    dest: /home/{{ remote_user }}/.profile
-    regexp: ^eval.*nodenv init
-    line: eval "$(nodenv init -)"
+  template:
+    src: nodenv.sh.j2
+    dest: /etc/profile.d/nodenv.sh
+    mode: a+x
+  become: true
 
 - name: Install node {{ node_version }}
   shell: '{{ nodenv_path }}/bin/nodenv install {{ node_version }}'
