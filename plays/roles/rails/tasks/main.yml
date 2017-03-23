@@ -2,10 +2,19 @@
   user: name={{ deploy_user }} comment="Application deployment user"
   become: true
 
-- name: Create deployment directory
-  file: >
-    path={{deploy_directory}} 
-    owner={{ deploy_user }}
-    group={{ deploy_user }}
-    state=directory
+# - name: Create deployment directory
+#   file: >
+#     path={{deploy_directory}} 
+#     owner={{ deploy_user }}
+#     group={{ deploy_user }}
+#     state=directory
+#   become: true
+
+- name: Update user permissions
+  template:
+    src: templates/deployer.j2
+    dest: /etc/sudoers.d/deployer
+    owner: root
+    group: root
+    mode: 0440
   become: true
