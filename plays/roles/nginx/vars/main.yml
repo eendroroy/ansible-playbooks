@@ -1,1 +1,1 @@
-server_hostname: local.host
+www_path: /var/www/html
