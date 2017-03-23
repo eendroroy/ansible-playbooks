@@ -1,0 +1,2 @@
+- name: rehash
+  shell: '{{ rbenv_path }}/bin/rbenv rehash'
