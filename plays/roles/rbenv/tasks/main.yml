@@ -1,7 +1,7 @@
 - name: Check for previous installation
   shell: '[ -d {{ rbenv_path }} ] && [ -d {{ ruby_build_path }} ] && echo true'
   ignore_errors: true
-  register: rvenv_exists
+  register: rbenv_exists
 
 - name: Create base directory
   file: >
@@ -10,6 +10,7 @@
     group={{ deploy_user }}
     owner={{ remote_user }}
   become: true
+  when: rbenv_exists.stdout != "true"
 
 - include: debian/dependencies.yml
 
@@ -22,28 +23,38 @@
 
 - name: Clone rbenv
   git: repo={{ rbenv_url }} dest={{ rbenv_path }} accept_hostkey=yes
-  when: rvenv_exists.stdout != "true"
+  when: rbenv_exists.stdout != "true"
+
+- name: Compile dynamic bash extension to speed up rbenv
+  shell: '{{ rbenv_path }}/src/configure && make -C {{ rbenv_path }}/src'
+  when: rbenv_exists.stdout != "true"
 
 - name: Clone ruby-build
   git: repo={{ ruby_build_url }} dest={{ ruby_build_path }}
-  when: rvenv_exists.stdout != "true"
+  when: rbenv_exists.stdout != "true"
 
 - name: Add rbenv to PATH
   template:
     src: rbenv.sh.j2
     dest: /etc/profile.d/rbenv.sh
-    mode: a+x
+    owner: root
+    group: root
+    mode: 0775
   become: true
 
 - name: Install ruby {{ ruby_version }}
-  shell: >
-    RUBY_CONFIGURE_OPTS=--disable-install-doc
-    {{ rbenv_path }}/bin/rbenv install {{ ruby_version }}
+  shell: 'rbenv install {{ ruby_version }}'
   when: check_ruby.stdout != ruby_version
+  become: true
+  become_flags: "-iu {{ remote_user }}"
 
 - name: Rehash ruby installations
-  shell: '{{ rbenv_path }}/bin/rbenv rehash'
+  shell: 'rbenv rehash'
   when: check_ruby.stdout != ruby_version
+  become: true
+  become_flags: "-iu {{ remote_user }}"
 
 - name: Set default ruby {{ ruby_version }}
-  shell: '{{ rbenv_path }}/bin/rbenv global {{ ruby_version }}'
+  shell: 'rbenv global {{ ruby_version }}'
+  become: true
+  become_flags: "-iu {{ remote_user }}"
