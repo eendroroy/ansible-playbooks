@@ -10,6 +10,7 @@
     group={{ deploy_user }}
     owner={{ remote_user }}
   become: true
+  when: nodenv_exists.stdout != "true"
 
 - include: debian/dependencies.yml
 
@@ -25,7 +26,7 @@
   when: nodenv_exists.stdout != "true"
 
 - name: Compile dynamic bash extension to speed up nodenv
-  shell: cd {{ nodenv_path }} && src/configure && make -C src
+  shell: '{{ nodenv_path }}/src/configure && make -C {{ nodenv_path }}/src'
   when: nodenv_exists.stdout != "true"
 
 - name: Clone node-build
@@ -40,12 +41,18 @@
   become: true
 
 - name: Install node {{ node_version }}
-  shell: '{{ nodenv_path }}/bin/nodenv install {{ node_version }}'
+  shell: 'nodenv install {{ node_version }}'
   when: check_node.stdout != node_version
+  become: true
+  become_flags: "-iu {{ remote_user }}"
 
 - name: Rehash node installations
-  shell: '{{ nodenv_path }}/bin/nodenv rehash'
+  shell: 'nodenv rehash'
   when: check_node.stdout != node_version
+  become: true
+  become_flags: "-iu {{ remote_user }}"
 
 - name: Set default node {{ node_version }}
-  shell: '{{ nodenv_path }}/bin/nodenv global {{ node_version }}'
+  shell: 'nodenv global {{ node_version }}'
+  become: true
+  become_flags: "-iu {{ remote_user }}"
