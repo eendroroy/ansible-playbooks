@@ -10,6 +10,7 @@
     group={{ deploy_user }}
     owner={{ remote_user }}
   become: true
+  when: pyenv_exists.stdout != "true"
 
 - include: debian/dependencies.yml
 
@@ -32,10 +33,18 @@
   become: true
 
 - name: Install python {{ python_version }}
-  shell: '{{ pyenv_path }}/bin/pyenv install {{ python_version }}'
+  shell: 'pyenv install {{ python_version }}'
   when: check_python.stdout != python_version
-  notify:
-    - rehash
+  become: true
+  become_flags: "-iu {{ remote_user }}"
+
+- name: Rehash python installations
+  shell: 'pyenv rehash'
+  when: check_python.stdout != python_version
+  become: true
+  become_flags: "-iu {{ remote_user }}"
 
 - name: Set default python {{ python_version }}
-  shell: '{{ pyenv_path }}/bin/pyenv global {{ python_version }}'
+  shell: 'pyenv global {{ python_version }}'
+  become: true
+  become_flags: "-iu {{ remote_user }}"
