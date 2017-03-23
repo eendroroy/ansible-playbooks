@@ -1,4 +1,4 @@
 rbenv_url: https://github.com/sstephenson/rbenv.git
-rbenv_path: '/home/{{ remote_user }}/.rbenv'
+rbenv_path: '/usr/local/rbenv'
 ruby_build_url: https://github.com/sstephenson/ruby-build.git
 ruby_build_path: '{{ rbenv_path }}/plugins/ruby-build'
