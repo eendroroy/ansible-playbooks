@@ -2,20 +2,22 @@
   debconf: >
     name='mysql-server'
     question='mysql-server/root_password'
-    value='{{mysql_root_password | quote}}'
+    value='root'
     vtype='password'
+  when: ansible_os_family == 'Debian'
   become: true
 
 - name: Confirm MySQL root password before installing
   debconf: >
     name='mysql-server'
     question='mysql-server/root_password_again'
-    value='{{mysql_root_password | quote}}'
+    value='root'
     vtype='password'
+  when: ansible_os_family == 'Debian'
   become: true
 
 - name: Install MySQL
-  apt: >
+  yum: >
     package={{ item }}
     state=installed
     force=yes
@@ -28,18 +30,41 @@
     - python-mysqldb
   become: true
 
+- name: Install MySQL
+  yum: >
+    package={{ item }}
+    state=installed
+    update_cache=yes
+  when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon"
+  with_items:
+    - mysql
+    - mysql-server
+    - mysql-devel
+    - MySQL-python
+  become: true
+
+- name: Install MySQL-python
+  shell: pip install MySQL-python
+  when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon"
+  become: true
+
+- name: Restart mysqld
+  service: name=mysqld state=restarted
+  when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon"
+  become: true
+
 - name: Secures the MySQL root user
   mysql_user: >
     user=root
     password={{ mysql_root_password }}
     host={{ item }}
-    login_password={{ mysql_root_password }}
     login_user=root
+#    login_password=root
   with_items:
-    - 127.0.0.1
-    - localhost
     - ::1
     - "{{ ansible_fqdn }}"
+    - 127.0.0.1
+    - localhost
 
 - name: Create MySQL server user for localhost
   mysql_user: >
@@ -68,14 +93,29 @@
     login_password="{{ mysql_root_password }}"
     login_user=root
 
+#- name: Create Mysql configuration file
+#  template: src=my.cnf.centos.j2 dest=/etc/my.cnf
+#  become: true
+#  notify:
+#  - restart mysqld
+#  when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon"
+
 - name: Create Mysql configuration file
-  template: src=my.cnf.j2 dest=/etc/my.cnf
+  template: src=my.cnf.debian.j2 dest=/etc/my.cnf
   become: true
   notify:
   - restart mysql
+  when: ansible_distribution == "Debian"
 
 - name: Start Mysql Service
   service: name=mysql state=started enabled=yes
+  when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon"
+  become: true
+
+- name: Start Mysqld Service
+  service: name=mysqld state=started enabled=yes
+  when: ansible_distribution == "Debian"
+  become: true
 
 - name: Install library
   apt: >
@@ -87,4 +127,14 @@
   when: ansible_os_family == 'Debian'
   with_items:
     - libmysqlclient-dev
+  become: true
+
+- name: Install library
+  yum: >
+    package={{ item }}
+    state=installed
+    update_cache=yes
+  when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon"
+  with_items:
+    - mysql-libs
   become: true
