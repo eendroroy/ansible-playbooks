@@ -10,11 +10,11 @@
   hosts: servers
 
   roles:
-    - nginx
-    - passenger
-    - mysql 
+    - rails
     - rbenv
     - nodenv
     - pyenv
-    - rails
-    # - puma 
+    - nginx
+#    - passenger
+    - mysql
+#    - puma
