@@ -1,4 +1,4 @@
-- name: Install nginx Debian
+- name: Install nginx
   apt: >
     package={{ item }} 
     state=installed 
@@ -10,32 +10,10 @@
     - nginx
   become: true
 
-- name: Install nginx CentOS
-  yum: >
-    package={{ item }}
-    state=installed
-    update_cache=yes
-  when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon"
-  with_items:
-    - nginx
+- name: Upload default confing
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
   become: true
-
-- name: Stat index
-  stat: path={{ www_path }}/index.nginx-debian.html
-  register: index_stat
-
-- name: Rename index.ubuntu-dedian.html to index.html
-  command: mv {{ www_path }}/index.nginx-debian.html {{ www_path }}/index.html
-  become: true
-  when: index_stat.stat.exists == true
-
-- name: Change owner
-  file: >
-    dest={{ www_path }}
-    state=directory
-    owner={{ deploy_user }}
-  become: true
-
-- name: Restart nginx
-  action: service name=nginx state=restarted
-  become: true
+  notify:
+    - restart nginx
