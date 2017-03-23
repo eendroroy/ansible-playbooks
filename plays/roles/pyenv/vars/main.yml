@@ -1,2 +1,2 @@
 pyenv_url: https://github.com/pyenv/pyenv.git
-pyenv_path: '/home/{{ remote_user }}/.pyenv'
+pyenv_path: '/usr/local/pyenv'

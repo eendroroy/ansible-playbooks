@@ -3,25 +3,17 @@
   ignore_errors: true
   register: pyenv_exists
 
-- name: Install dependencies
-  apt: >
-    name={{item}} 
-    state=installed 
-    update_cache=yes 
-    cache_valid_time=3600
-  with_items:
-      - make
-      - git
-      - gcc
-      - libssl-dev 
-      - libreadline-dev
-      - zlib1g-dev
-      - build-essential
-      - checkinstall
-      - tk-dev
-      - libbz2-dev
+- name: Create base directory
+  file: >
+    path={{ pyenv_path }}
+    state=directory
+    group={{ deploy_user }}
+    owner={{ remote_user }}
   become: true
-  when: pyenv_exists.stdout != "true"
+
+- include: debian/dependencies.yml
+
+- include: centos/dependencies.yml
 
 - name: Check for {{ python_version }}
   shell: ls {{ pyenv_path }}/versions | grep {{ python_version }}
@@ -33,16 +25,11 @@
   when: pyenv_exists.stdout != "true"
 
 - name: Add pyenv to PATH
-  lineinfile: 
-    dest: /home/{{ remote_user }}/.profile
-    regexp: ^export.*pyenv/bin
-    line: export PATH="$HOME/.pyenv/bin:$HOME/.pyenv/shims:$PATH"    
-
-- name: Install pyenv shims
-  lineinfile: 
-    dest: /home/{{ remote_user }}/.profile
-    regexp: ^eval.*pyenv init
-    line: eval "$(pyenv init -)"
+  template:
+    src: pyenv.sh.j2
+    dest: /etc/profile.d/pyenv.sh
+    mode: a+x
+  become: true
 
 - name: Install python {{ python_version }}
   shell: '{{ pyenv_path }}/bin/pyenv install {{ python_version }}'

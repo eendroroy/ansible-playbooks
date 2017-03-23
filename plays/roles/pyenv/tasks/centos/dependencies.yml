@@ -1,0 +1,29 @@
+---
+- name: Install dependencies
+  yum: >
+    name={{item}}
+    state=installed
+    update_cache=yes
+  with_items:
+      - git
+      - zlib
+      - zlib-devel
+      - gcc-c++
+      - patch
+      - readline
+      - readline-devel
+      - libyaml-devel
+      - libffi-devel
+      - openssl-devel
+      - make
+      - bzip2
+      - autoconf
+      - automake
+      - libtool
+      - bison
+      - curl
+      - sqlite-devel
+  become: true
+  when: >
+    rvenv_exists.stdout != "true"
+    and ( ansible_distribution == "CentOS" or ansible_distribution == "Amazon" )
