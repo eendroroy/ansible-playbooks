@@ -5,7 +5,6 @@ python_version: 2.7.13
 node_version: 7.7.4
 
 app_name: application
-app_env: staging
 
 deploy_user: deployer
-deploy_directory: /var/www/apps/{{app_name}}
+deploy_directory: /home/{{ deploy_user }}/apps/{{ app_name }}
