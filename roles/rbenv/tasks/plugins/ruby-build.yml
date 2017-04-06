@@ -1,0 +1,7 @@
+---
+- name: Clone ruby-build
+  git:
+    repo: {{ ruby_build_url }}
+    dest: {{ ruby_build_path }}
+  when: rbenv_exists.stdout != "true"
+
