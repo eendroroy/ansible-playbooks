@@ -1,7 +1,7 @@
 ---
 - name: Install dependencies
   apt:
-    name: {{item}}
+    name: '{{ item }}'
     state: installed
     force: yes
     update_cache: yes

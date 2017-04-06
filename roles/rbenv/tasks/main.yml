@@ -5,10 +5,10 @@
 
 - name: Create base directory
   file:
-    path: {{ rbenv_path }}
+    path: '{{ rbenv_path }}'
     state: directory
-    group: {{ deploy_user }}
-    owner: {{ remote_user }}
+    group: '{{ deploy_user }}'
+    owner: '{{ remote_user }}'
   become: true
   when: rbenv_exists.stdout != "true"
 

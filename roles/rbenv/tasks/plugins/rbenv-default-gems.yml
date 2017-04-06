@@ -1,12 +1,12 @@
 ---
 - name: Clone rbenv-default-gems
   git:
-    repo: {{ rbenv_default_gems_url }}
-    dest: {{ rbenv_default_gems_path }}
+    repo: '{{ rbenv_default_gems_url }}'
+    dest: '{{ rbenv_default_gems_path }}'
   when: rbenv_exists.stdout != "true"
 
 - name: Create default gems list
   template:
     src: templates/default-gems.j2
-    dest: {{ rbenv_path }}/default-gems
+    dest: '{{ rbenv_path }}/default-gems'
 

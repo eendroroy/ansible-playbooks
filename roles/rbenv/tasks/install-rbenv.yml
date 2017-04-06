@@ -1,8 +1,8 @@
 ---
 - name: Clone rbenv
   git:
-    repo: {{ rbenv_url }}
-    dest: {{ rbenv_path }}
+    repo: '{{ rbenv_url }}'
+    dest: '{{ rbenv_path }}'
     accept_hostkey: yes
   when: rbenv_exists.stdout != "true"
 
