@@ -5,10 +5,10 @@
 
 - name: Create base directory
   file:
-    path: {{ nodenv_path }}
+    path: '{{ nodenv_path }}'
     state: directory
-    group: {{ deploy_user }}
-    owner: {{ remote_user }}
+    group: '{{ deploy_user }}'
+    owner: '{{ remote_user }}'
   become: true
   when: nodenv_exists.stdout != "true"
 
@@ -23,8 +23,8 @@
 
 - name: Clone nodenv
   git:
-    repo: {{ nodenv_url }}
-    dest: {{ nodenv_path }}
+    repo: '{{ nodenv_url }}'
+    dest: '{{ nodenv_path }}'
     accept_hostkey: yes
   when: nodenv_exists.stdout != "true"
 
@@ -34,8 +34,8 @@
 
 - name: Clone node-build
   git:
-    repo: {{ node_build_url }}
-    dest: {{ node_build_path }}
+    repo: '{{ node_build_url }}'
+    dest: '{{ node_build_path }}'
   when: nodenv_exists.stdout != "true"
 
 - name: Add nodenv to PATH

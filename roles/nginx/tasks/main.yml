@@ -1,6 +1,6 @@
 - name: Install nginx
   apt:
-    package: {{ item }} 
+    package: '{{ item }}'
     state: installed 
     force: yes 
     update_cache: yes 
