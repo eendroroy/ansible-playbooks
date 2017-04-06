@@ -1,5 +1,7 @@
 - name: Create deployment user
-  user: name={{ deploy_user }} comment="Application deployment user"
+  user:
+    name: {{ deploy_user }}
+    comment: "Application deployment user"
   become: true
 
 # - name: Create deployment directory

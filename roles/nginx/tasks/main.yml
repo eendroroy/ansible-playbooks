@@ -1,10 +1,10 @@
 - name: Install nginx
-  apt: >
-    package={{ item }} 
-    state=installed 
-    force=yes 
-    update_cache=yes 
-    cache_valid_time=3600
+  apt:
+    package: {{ item }} 
+    state: installed 
+    force: yes 
+    update_cache: yes 
+    cache_valid_time: 3600
   when: ansible_os_family == 'Debian'
   with_items:
     - nginx

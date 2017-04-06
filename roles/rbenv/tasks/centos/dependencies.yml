@@ -1,9 +1,9 @@
 ---
 - name: Install dependencies
-  yum: >
-    name={{item}}
-    state=installed
-    update_cache=yes
+  yum:
+    name: {{item}}
+    state: installed
+    update_cache: yes
   with_items:
       - git
       - zlib

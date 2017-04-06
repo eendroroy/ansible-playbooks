@@ -4,11 +4,11 @@
   register: pyenv_exists
 
 - name: Create base directory
-  file: >
-    path={{ pyenv_path }}
-    state=directory
-    group={{ deploy_user }}
-    owner={{ remote_user }}
+  file:
+    path: {{ pyenv_path }}
+    state: directory
+    group: {{ deploy_user }}
+    owner: {{ remote_user }}
   become: true
   when: pyenv_exists.stdout != "true"
 
@@ -22,7 +22,10 @@
   ignore_errors: yes
 
 - name: Clone pyenv
-  git: repo={{ pyenv_url }} dest={{ pyenv_path }} accept_hostkey=yes
+  git:
+    repo: {{ pyenv_url }}
+    dest: {{ pyenv_path }}
+    accept_hostkey: yes
   when: pyenv_exists.stdout != "true"
 
 - name: Add pyenv to PATH

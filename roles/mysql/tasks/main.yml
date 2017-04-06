@@ -1,28 +1,28 @@
 - name: Set MySQL root password before installing
-  debconf: >
-    name='mysql-server'
-    question='mysql-server/root_password'
-    value='root'
-    vtype='password'
+  debconf:
+    name: 'mysql-server'
+    question: 'mysql-server/root_password'
+    value: 'root'
+    vtype: 'password'
   when: ansible_os_family == 'Debian'
   become: true
 
 - name: Confirm MySQL root password before installing
-  debconf: >
-    name='mysql-server'
-    question='mysql-server/root_password_again'
-    value='root'
-    vtype='password'
+  debconf:
+    name: 'mysql-server'
+    question: 'mysql-server/root_password_again'
+    value: 'root'
+    vtype: 'password'
   when: ansible_os_family == 'Debian'
   become: true
 
 - name: Install MySQL
-  yum: >
-    package={{ item }}
-    state=installed
-    force=yes
-    update_cache=yes
-    cache_valid_time=3600
+  yum:
+    package: '{{ item }}'
+    state: installed
+    force: yes
+    update_cache: yes
+    cache_valid_time: 3600
   when: ansible_os_family == 'Debian'
   with_items:
     - mysql-server
@@ -31,10 +31,10 @@
   become: true
 
 - name: Install MySQL
-  yum: >
-    package={{ item }}
-    state=installed
-    update_cache=yes
+  yum:
+    package: '{{ item }}'
+    state: installed
+    update_cache: yes
   when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon"
   with_items:
     - mysql
@@ -49,17 +49,19 @@
   become: true
 
 - name: Restart mysqld
-  service: name=mysqld state=restarted
+  service: 
+    name: mysqld 
+    state: restarted
   when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon"
   become: true
 
 - name: Secures the MySQL root user
-  mysql_user: >
-    user=root
-    password={{ mysql_root_password }}
-    host={{ item }}
-    login_user=root
-#    login_password=root
+  mysql_user:
+    user: root
+    password: '{{ mysql_root_password }}'
+    host: '{{ item }}'
+    login_user: root
+#    login_password: root
   with_items:
     - ::1
     - "{{ ansible_fqdn }}"
@@ -68,30 +70,30 @@
 
 - name: Create MySQL server user for localhost
   mysql_user: >
-    user={{ item }}
-    password={{ mysql_user_password }}
-    priv='*.*:ALL,GRANT'
-    state=present
-    login_password={{ mysql_root_password }}
-    login_user=root
+    user: '{{ item }}'
+    password: '{{ mysql_user_password }}'
+    priv: '*.*:ALL,GRANT'
+    state: present
+    login_password: '{{ mysql_root_password }}'
+    login_user: root
   with_items:
     - "{{ mysql_user }}"
 
 - name: Delete anonymous MySQL server user for localhost
-  mysql_user: >
-    user={{ item }}
-    state=absent
-    login_password={{ mysql_root_password }}
-    login_user=root
+  mysql_user:
+    user: '{{ item }}'
+    state: absent
+    login_password: '{{ mysql_root_password }}'
+    login_user: root
   with_items:
     - ''
 
 - name: Removes the MySQL test database
-  mysql_db: >
-    db=test
-    state=absent
-    login_password="{{ mysql_root_password }}"
-    login_user=root
+  mysql_db:
+    db: test
+    state: absent
+    login_password: "{{ mysql_root_password }}"
+    login_user: root
 
 #- name: Create Mysql configuration file
 #  template: src=my.cnf.centos.j2 dest=/etc/my.cnf
@@ -101,14 +103,19 @@
 #  when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon"
 
 - name: Create Mysql configuration file
-  template: src=my.cnf.debian.j2 dest=/etc/my.cnf
+  template:
+    src: my.cnf.debian.j2
+    dest: /etc/my.cnf
   become: true
   notify:
   - restart mysql
   when: ansible_distribution == "Debian"
 
 - name: Start Mysql Service
-  service: name=mysql state=started enabled=yes
+  service:
+    name: mysql
+    state: started
+    enabled: yes
   when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon"
   become: true
 
@@ -118,22 +125,22 @@
   become: true
 
 - name: Install library
-  apt: >
-    package={{ item }}
-    state=installed
-    force=yes
-    update_cache=yes
-    cache_valid_time=3600
+  apt:
+    package: '{{ item }}'
+    state: installed
+    force: yes
+    update_cache: yes
+    cache_valid_time: 3600
   when: ansible_os_family == 'Debian'
   with_items:
     - libmysqlclient-dev
   become: true
 
 - name: Install library
-  yum: >
-    package={{ item }}
-    state=installed
-    update_cache=yes
+  yum:
+    package: '{{ item }}'
+    state: installed
+    update_cache: yes
   when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon"
   with_items:
     - mysql-libs

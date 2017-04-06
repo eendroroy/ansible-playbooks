@@ -1,8 +1,12 @@
 ---
 - name: restart mysql
-  service: name=mysql state=restarted
+  service:
+    name: mysql
+    state: restarted
   become: true
 
 - name: restart mysqld
-  service: name=mysqld state=restarted
+  service:
+    name: mysqld
+    state: restarted
   become: true

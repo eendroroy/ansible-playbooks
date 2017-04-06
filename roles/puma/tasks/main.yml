@@ -1,59 +1,59 @@
 ---
 - name: Add puma-manager
-  template: >
-    src=puma_manager.j2 
-    dest=/etc/init/puma-manager.conf 
-    force=yes 
-    mode=755
+  template:
+    src: puma_manager.j2 
+    dest: /etc/init/puma-manager.conf 
+    force: yes 
+    mode: 755
   tags: puma
   become: true
 
 - name: Add puma service
-  template: >
-    src=puma.service.j2
-    dest=/etc/systemd/system/puma.service
-    force=yes
-    mode=755
+  template:
+    src: puma.service.j2
+    dest: /etc/systemd/system/puma.service
+    force: yes
+    mode: 755
   become: true
 
 - name: Add puma config
-  template: >
-    src=etc_puma.conf.j2 
-    dest=/etc/puma.conf 
-    force=yes 
-    mode=755
+  template:
+    src: etc_puma.conf.j2 
+    dest: /etc/puma.conf 
+    force: yes 
+    mode: 755
   tags: puma
   become: true
 
 - name: Add puma init script
-  template: >
-    src=etc_init_puma.j2 
-    dest=/etc/init/puma.conf 
-    force=yes 
-    mode=755
+  template:
+    src: etc_init_puma.j2 
+    dest: /etc/init/puma.conf 
+    force: yes 
+    mode: 755
   tags: puma
   become: true
 
 - name: Create shared/config/puma
-  file: >
-    path={{deploy_directory}}/shared/config/puma
-    state=directory
+  file:
+    path: {{deploy_directory}}/shared/config/puma
+    state: directory
 
 - name: Add puma shared/config
-  template: >
-    src=puma_production.j2 
-    dest={{deploy_directory}}/shared/config/puma/production.rb 
-    force=yes 
-    mode=755
+  template:
+    src: puma_production.j2 
+    dest: {{deploy_directory}}/shared/config/puma/production.rb 
+    force: yes 
+    mode: 755
   tags: puma
   become: true
 
 - name: Make shared/tmp/sockets
-  file: >
-    path={{deploy_directory}}/shared/tmp/sockets 
-    group={{ remote_user }}
-    owner={{ remote_user }} 
-    state=directory
+  file:
+    path: {{deploy_directory}}/shared/tmp/sockets 
+    group: {{ remote_user }}
+    owner: {{ remote_user }} 
+    state: directory
   tags: tmp
   become: true
 
