@@ -1,9 +1,8 @@
 ---
 - name: Install ruby {{ ruby_version }}
-  shell: 'rbenv install {{ ruby_version }}'
+  shell: 'RBENV_ROOT={{ rbenv_path }} RBENV_VERSION={{ ruby_version }} {{ rbenv_path }}/bin/rbenv install {{ ruby_version }}'
   when: check_ruby.stdout != ruby_version
   become: true
-  become_flags: "-iu {{ remote_user }}"
 
 - name: Rehash ruby installations
   shell: 'rbenv rehash'
@@ -12,7 +11,6 @@
   become_flags: "-iu {{ remote_user }}"
 
 - name: Set default ruby {{ ruby_version }}
-  shell: 'rbenv global {{ ruby_version }}'
+  shell: 'RBENV_ROOT={{ rbenv_path }} RBENV_VERSION={{ ruby_version }} {{ rbenv_path }}/bin/rbenv global {{ ruby_version }}'
   become: true
-  become_flags: "-iu {{ remote_user }}"
 

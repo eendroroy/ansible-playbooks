@@ -14,4 +14,4 @@
       - libreadline-dev
       - zlib1g-dev
   become: true
-  when: rbenv_exists.stdout != "true" and ansible_os_family == 'Debian'
+  
