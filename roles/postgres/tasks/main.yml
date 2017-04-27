@@ -1,0 +1,48 @@
+---
+- name: Install postgres
+  apt: name={{ item }}
+  with_items:
+    - postgresql
+    - libpq-dev
+    - python-psycopg2
+  become: true
+
+- name: Ensure the PostgreSQL service is running
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: Create database
+  postgresql_db:
+    name: '{{ app_name }}_{{ app_env }}'
+    state: present
+  become: true
+  become_user: postgres
+
+- name: Ensure user has access to database
+  postgresql_user:
+    db: '{{ app_name }}_{{ app_env }}'
+    name: '{{ postgres_user }}'
+    password: '{{ postgres_user_password }}'
+    priv: 'ALL'
+  become: true
+  become_user: postgres
+
+- name: Ensure user does not have unnecessary privilege
+  postgresql_user:
+    name: '{{ postgres_user }}'
+    password: '{{ postgres_user_password }}'
+    role_attr_flags: 'NOSUPERUSER,NOCREATEDB'
+  become: true
+  become_user: postgres
+
+- name: Ensure no other user can access the database
+  postgresql_privs:
+    db: '{{ app_name }}_{{ app_env }}'
+    role: 'PUBLIC'
+    type: 'database'
+    priv: 'ALL'
+    state: 'absent'
+  become: true
+  become_user: postgres

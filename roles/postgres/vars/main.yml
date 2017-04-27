@@ -1,0 +1,2 @@
+postgres_user: secureUser
+postgres_user_password: 1SimplePassword
