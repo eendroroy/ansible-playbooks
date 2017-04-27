@@ -7,36 +7,21 @@
   file:
     path: '{{ nodenv_path }}'
     state: directory
-    group: '{{ deploy_user }}'
+    group: '{{ remote_user }}'
     owner: '{{ remote_user }}'
   become: true
   when: nodenv_exists.stdout != "true"
 
-- include: debian/dependencies.yml
+- include: dependencies/debian.yml
 
-- include: centos/dependencies.yml
+- include: dependencies/centos.yml
 
 - name: Check for {{ node_version }}
   shell: ls {{ nodenv_path }}/versions | grep {{ node_version }}
   register: check_node
   ignore_errors: yes
 
-- name: Clone nodenv
-  git:
-    repo: '{{ nodenv_url }}'
-    dest: '{{ nodenv_path }}'
-    accept_hostkey: yes
-  when: nodenv_exists.stdout != "true"
-
-- name: Compile dynamic bash extension to speed up nodenv
-  shell: '{{ nodenv_path }}/src/configure && make -C {{ nodenv_path }}/src'
-  when: nodenv_exists.stdout != "true"
-
-- name: Clone node-build
-  git:
-    repo: '{{ node_build_url }}'
-    dest: '{{ node_build_path }}'
-  when: nodenv_exists.stdout != "true"
+- include: install-nodenv.yml
 
 - name: Add nodenv to PATH
   template:
@@ -45,19 +30,4 @@
     mode: a+x
   become: true
 
-- name: Install node {{ node_version }}
-  shell: 'nodenv install {{ node_version }}'
-  when: check_node.stdout != node_version
-  become: true
-  become_flags: "-iu {{ remote_user }}"
-
-- name: Rehash node installations
-  shell: 'nodenv rehash'
-  when: check_node.stdout != node_version
-  become: true
-  become_flags: "-iu {{ remote_user }}"
-
-- name: Set default node {{ node_version }}
-  shell: 'nodenv global {{ node_version }}'
-  become: true
-  become_flags: "-iu {{ remote_user }}"
+- include: install-node.yml

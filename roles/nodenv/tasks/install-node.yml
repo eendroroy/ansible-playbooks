@@ -1,0 +1,14 @@
+---
+- name: Install node {{ node_version }}
+  shell: 'NODENV_ROOT={{ nodenv_path }} {{ nodenv_path }}/bin/nodenv install {{ node_version }}'
+  when: check_node.stdout != node_version
+  become: true
+
+- name: Rehash node installations
+  shell: 'NODENV_ROOT={{ nodenv_path }} {{ nodenv_path }}/bin/nodenv rehash'
+  when: check_node.stdout != node_version
+  become: true
+
+- name: Set default node {{ node_version }}
+  shell: 'NODENV_ROOT={{ nodenv_path }} {{ nodenv_path }}/bin/nodenv global {{ node_version }}'
+  become: true
