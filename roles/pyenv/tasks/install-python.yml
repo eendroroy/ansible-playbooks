@@ -1,0 +1,14 @@
+---
+- name: Install python {{ python_version }}
+  shell: 'PYENV_ROOT={{ pyenv_path }} {{ pyenv_path }}/bin/pyenv install {{ python_version }}'
+  when: check_python.stdout != python_version
+  become: true
+
+- name: Rehash python installations
+  shell: 'PYENV_ROOT={{ pyenv_path }} {{ pyenv_path }}/bin/pyenv rehash'
+  when: check_python.stdout != python_version
+  become: true
+
+- name: Set default python {{ python_version }}
+  shell: 'PYENV_ROOT={{ pyenv_path }} {{ pyenv_path }}/bin/pyenv global {{ python_version }}'
+  become: true

@@ -1,0 +1,12 @@
+---
+- name: Clone pyenv
+  git:
+    repo: '{{ pyenv_url }}'
+    dest: '{{ pyenv_path }}'
+    accept_hostkey: yes
+  when: pyenv_exists.stdout != "true"
+
+- name: Compile dynamic bash extension to speed up pyenv
+  shell: '{{ pyenv_path }}/src/configure && make -C {{ pyenv_path }}/src'
+  when: pyenv_exists.stdout != "true"
+

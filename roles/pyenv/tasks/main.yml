@@ -7,14 +7,18 @@
   file:
     path: '{{ pyenv_path }}'
     state: directory
-    group: '{{ deploy_user }}'
+    group: '{{ remote_user }}'
     owner: '{{ remote_user }}'
   become: true
   when: pyenv_exists.stdout != "true"
 
-- include: debian/dependencies.yml
+- include: dependencies/debian.yml
+  when: pyenv_exists.stdout != "true" and ansible_os_family == 'Debian'
 
-- include: centos/dependencies.yml
+- include: dependencies/centos.yml
+  when: >
+    pyenv_exists.stdout != "true"
+    and ( ansible_distribution == "CentOS" or ansible_distribution == "Amazon" )
 
 - name: Check for {{ python_version }}
   shell: ls {{ pyenv_path }}/versions | grep {{ python_version }}
@@ -35,19 +39,4 @@
     mode: a+x
   become: true
 
-- name: Install python {{ python_version }}
-  shell: 'pyenv install {{ python_version }}'
-  when: check_python.stdout != python_version
-  become: true
-  become_flags: "-iu {{ remote_user }}"
-
-- name: Rehash python installations
-  shell: 'pyenv rehash'
-  when: check_python.stdout != python_version
-  become: true
-  become_flags: "-iu {{ remote_user }}"
-
-- name: Set default python {{ python_version }}
-  shell: 'pyenv global {{ python_version }}'
-  become: true
-  become_flags: "-iu {{ remote_user }}"
+- include: install-python.yml
