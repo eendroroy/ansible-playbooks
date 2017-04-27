@@ -2,6 +2,7 @@
   user:
     name: '{{ deploy_user }}'
     comment: "Application deployment user"
+    home: '{{ deploy_home }}'
   become: true
 
 - name: Update user permissions
@@ -11,4 +12,21 @@
     owner: root
     group: root
     mode: 0440
+  become: true
+
+- name: Create .ssh folder
+  file:
+    path: '{{ deploy_home }}/.ssh'
+    state: directory
+    group: '{{ deploy_user }}'
+    owner: '{{ deploy_user }}'
+  become: true
+
+- name: "Update {{ deploy_user }}'s allowed keys"
+  copy:
+    remote_src: true
+    src: '{{ remote_home }}/.ssh/authorized_keys'
+    dest: '{{ deploy_home }}/.ssh/authorized_keys'
+    group: '{{ deploy_user }}'
+    owner: '{{ deploy_user }}'
   become: true
