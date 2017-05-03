@@ -44,13 +44,14 @@
   become: true
 
 - name: Install MySQL-python
-  shell: pip install MySQL-python
+  pip:
+    name: MySQL-python
   when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon"
   become: true
 
 - name: Restart mysqld
-  service: 
-    name: mysqld 
+  service:
+    name: mysqld
     state: restarted
   when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon"
   become: true

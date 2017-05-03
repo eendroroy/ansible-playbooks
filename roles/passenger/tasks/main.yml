@@ -7,10 +7,10 @@
 
 - name: Install packages to enable apt over HTTPS
   apt:
-    package: {{ item }} 
-    state: installed 
-    force: yes 
-    update_cache: yes 
+    package: {{ item }}
+    state: installed
+    force: yes
+    update_cache: yes
     cache_valid_time: 3600
   with_items:
     - apt-transport-https
@@ -24,10 +24,10 @@
 
 - name: Install nginx-extras and passenger
   apt:
-    package: {{ item }} 
-    state: installed 
-    force: yes 
-    update_cache: yes 
+    package: {{ item }}
+    state: installed
+    force: yes
+    update_cache: yes
     cache_valid_time: 3600
   with_items:
     - nginx-extras

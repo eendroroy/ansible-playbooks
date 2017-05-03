@@ -9,7 +9,7 @@ Vagrant.configure("2") do |config|
   # config.vm.synced_folder "./rails-app", "/data/application"
   config.vm.provider "virtualbox" do |vb|
     vb.name = "ansible-test"
-    vb.gui = false 
+    vb.gui = false
     vb.memory = 1024
   end
 end

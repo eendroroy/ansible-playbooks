@@ -16,7 +16,7 @@
 - name: Install mongo
   become: true
   apt:
-    name: mongodb-org 
+    name: mongodb-org
     state: latest
-    update_cache: yes 
+    update_cache: yes
     cache_valid_time: 3600
