@@ -10,11 +10,10 @@
   hosts: servers
 
   roles:
-    - rails
+    - rails-config
     - rbenv
     - nodenv
     - pyenv
     - nginx
-#    - passenger
     - mysql
     - postgres

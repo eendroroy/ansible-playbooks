@@ -1,22 +1,7 @@
 ---
 - name: Test prod
-  hosts: ifc-production
-  gather_facts: no
-
-  roles:
-    - test
-
-- name: test staging
-  hosts: ifc-staging
-  gather_facts: no
-
-  roles:
-    - test
-
-- name: Test vag
   hosts: servers
   gather_facts: no
 
   roles:
     - test
-
