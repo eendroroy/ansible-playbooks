@@ -1,42 +1,25 @@
 - name: Check for previous installation
-  shell: '[ -d {{ pyenv_path }} ] && echo true'
+  stat:
+    path: '{{ pyenv_path }}/bin/pyenv'
   ignore_errors: true
-  register: pyenv_exists
-
-- name: Create base directory
-  file:
-    path: '{{ pyenv_path }}'
-    state: directory
-    group: '{{ remote_user }}'
-    owner: '{{ remote_user }}'
-  become: true
-  when: pyenv_exists.stdout != "true"
+  register: pyenv_bin_dir
 
 - include: dependencies/debian.yml
-  when: pyenv_exists.stdout != "true" and ansible_os_family == 'Debian'
+  when: pyenv_bin_dir.stat.exists == false and ansible_os_family == 'Debian'
 
 - include: dependencies/centos.yml
   when: >
-    pyenv_exists.stdout != "true"
+    pyenv_bin_dir.stat.exists == false
     and ( ansible_distribution == "CentOS" or ansible_distribution == "Amazon" )
 
+- include: install-pyenv.yml
+  when: pyenv_bin_dir.stat.exists == false
+
 - name: Check for {{ python_version }}
-  shell: ls {{ pyenv_path }}/versions | grep {{ python_version }}
-  register: check_python
+  stat:
+    path: '{{ pyenv_path }}/versions/{{ python_version }}'
+  register: python
   ignore_errors: yes
 
-- name: Clone pyenv
-  git:
-    repo: '{{ pyenv_url }}'
-    dest: '{{ pyenv_path }}'
-    accept_hostkey: yes
-  when: pyenv_exists.stdout != "true"
-
-- name: Add pyenv to PATH
-  template:
-    src: pyenv.sh.j2
-    dest: /etc/profile.d/pyenv.sh
-    mode: a+x
-  become: true
-
 - include: install-python.yml
+  when: python.stat.exists == false

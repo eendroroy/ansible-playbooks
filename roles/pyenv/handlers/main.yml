@@ -1,2 +1,2 @@
 - name: rehash
-  shell: 'PYENV_ROOT={{ pyenv_path }} {{ pyenv_path }}/bin/pyenv rehash'
+  raw: 'PYENV_ROOT={{ pyenv_path }} {{ pyenv_path }}/bin/pyenv rehash'

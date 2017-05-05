@@ -1,5 +1,5 @@
 ---
-- name: Install dependencies
+- name: Install dependencies Ubuntu
   apt:
     name: '{{ item }}'
     state: installed
