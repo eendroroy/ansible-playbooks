@@ -1,25 +1,10 @@
-- name: Check for previous installation
-  stat:
-    path: '{{ pyenv_path }}/bin/pyenv'
-  ignore_errors: true
-  register: pyenv_bin_dir
-
+---
 - include: dependencies/debian.yml
-  when: pyenv_bin_dir.stat.exists == false and ansible_os_family == 'Debian'
+  when: ansible_os_family == 'Debian'
 
 - include: dependencies/centos.yml
-  when: >
-    pyenv_bin_dir.stat.exists == false
-    and ( ansible_distribution == "CentOS" or ansible_distribution == "Amazon" )
+  when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon"
 
 - include: install-pyenv.yml
-  when: pyenv_bin_dir.stat.exists == false
-
-- name: Check for {{ python_version }}
-  stat:
-    path: '{{ pyenv_path }}/versions/{{ python_version }}'
-  register: python
-  ignore_errors: yes
 
 - include: install-python.yml
-  when: python.stat.exists == false

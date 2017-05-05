@@ -1,8 +1,18 @@
 ---
-- name: Install python {{ python_version }}
-  raw: 'PYENV_ROOT={{ pyenv_path }} {{ pyenv_path }}/bin/pyenv install {{ python_version }}'
-  become: true
 
-- name: Rehash python installations
-  raw: 'PYENV_ROOT={{ pyenv_path }} {{ pyenv_path }}/bin/pyenv rehash'
-  become: true
+- name: Check for {{ python_version }}
+  stat:
+    path: '{{ pyenv_path }}/versions/{{ python_version }}'
+  register: python
+  ignore_errors: yes
+
+- block:
+  - name: Install python {{ python_version }}
+    raw: 'PYENV_ROOT={{ pyenv_path }} {{ pyenv_path }}/bin/pyenv install {{ python_version }}'
+    become: true
+
+  - name: Rehash python installations
+    raw: 'PYENV_ROOT={{ pyenv_path }} {{ pyenv_path }}/bin/pyenv rehash'
+    become: true
+
+  when: python.stat.exists == false

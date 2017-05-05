@@ -1,24 +1,33 @@
 ---
-- name: Create base directory
-  file:
-    path: '{{ pyenv_path }}'
-    state: directory
-    group: '{{ remote_user }}'
-    owner: '{{ remote_user }}'
-  become: true
+- name: Check for previous installation
+  stat:
+    path: '{{ pyenv_path }}/bin/pyenv'
+  ignore_errors: true
+  register: pyenv_bin_dir
 
-- name: Clone pyenv
-  git:
-    repo: '{{ pyenv_url }}'
-    dest: '{{ pyenv_path }}'
-    accept_hostkey: yes
+- block:
+  - name: Create base directory
+    file:
+      path: '{{ pyenv_path }}'
+      state: directory
+      group: '{{ remote_user }}'
+      owner: '{{ remote_user }}'
+    become: true
 
-- name: Compile dynamic bash extension to speed up pyenv
-  raw: '{{ pyenv_path }}/src/configure && make -C {{ pyenv_path }}/src'
+  - name: Clone pyenv
+    git:
+      repo: '{{ pyenv_url }}'
+      dest: '{{ pyenv_path }}'
+      accept_hostkey: yes
 
-- name: Add pyenv to PATH
-  template:
-    src: pyenv.sh.j2
-    dest: /etc/profile.d/pyenv.sh
-    mode: a+x
-  become: true
+  - name: Compile dynamic bash extension to speed up pyenv
+    raw: '{{ pyenv_path }}/src/configure && make -C {{ pyenv_path }}/src'
+
+  - name: Add pyenv to PATH
+    template:
+      src: pyenv.sh.j2
+      dest: /etc/profile.d/pyenv.sh
+      mode: a+x
+    become: true
+
+  when: pyenv_bin_dir.stat.exists == false
