@@ -1,14 +1,28 @@
 ---
-- name: Install node {{ node_version }}
-  shell: 'NODENV_ROOT={{ nodenv_path }} {{ nodenv_path }}/bin/nodenv install {{ node_version }}'
-  when: check_node.stdout != node_version
-  become: true
+- name: Check for {{ node_version }}
+  stat:
+    path: '{{ nodenv_path }}/versions/{{ node_version }}'
+  register: node
+  ignore_errors: yes
 
-- name: Rehash node installations
-  shell: 'NODENV_ROOT={{ nodenv_path }} {{ nodenv_path }}/bin/nodenv rehash'
-  when: check_node.stdout != node_version
-  become: true
+- block:
+  - name: Install node {{ node_version }}
+    shell: 'NODENV_ROOT={{ nodenv_path }} {{ nodenv_path }}/bin/nodenv install {{ node_version }}'
+    become: true
 
-- name: Set default node {{ node_version }}
-  shell: 'NODENV_ROOT={{ nodenv_path }} {{ nodenv_path }}/bin/nodenv global {{ node_version }}'
-  become: true
+  - name: Rehash node installations
+    shell: 'NODENV_ROOT={{ nodenv_path }} {{ nodenv_path }}/bin/nodenv rehash'
+    become: true
+
+  - name: Set default node {{ node_version }}
+    shell: 'NODENV_ROOT={{ nodenv_path }} {{ nodenv_path }}/bin/nodenv global {{ node_version }}'
+    become: true
+
+  - name: Add nodenv to PATH
+    template:
+      src: nodenv.sh.j2
+      dest: /etc/profile.d/nodenv.sh
+      mode: a+x
+    become: true
+
+  when: node.stat.exists == false

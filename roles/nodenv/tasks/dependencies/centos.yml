@@ -1,5 +1,5 @@
 ---
-- name: Install dependencies
+- name: Install dependencies for CestOS
   yum:
     name: '{{ item }}'
     state: installed
@@ -24,6 +24,3 @@
       - curl
       - sqlite-devel
   become: true
-  when: >
-    rvenv_exists.stdout != "true"
-    and ( ansible_distribution == "CentOS" or ansible_distribution == "Amazon" )

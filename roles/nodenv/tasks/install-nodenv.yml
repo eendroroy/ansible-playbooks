@@ -1,16 +1,31 @@
-- name: Clone nodenv
-  git:
-    repo: '{{ nodenv_url }}'
-    dest: '{{ nodenv_path }}'
-    accept_hostkey: yes
-  when: nodenv_exists.stdout != "true"
+---
+- name: Check for previous installation
+  stat:
+    path: '{{ nodenv_path }}/bin/nodenv'
+  ignore_errors: true
+  register: nodenv_bin_dir
 
-- name: Compile dynamic bash extension to speed up nodenv
-  shell: '{{ nodenv_path }}/src/configure && make -C {{ nodenv_path }}/src'
-  when: nodenv_exists.stdout != "true"
+- block:
+  - name: Create base directory
+    file:
+      path: '{{ nodenv_path }}'
+      state: directory
+      group: '{{ remote_user }}'
+      owner: '{{ remote_user }}'
+    become: true
 
-- name: Clone node-build
-  git:
-    repo: '{{ node_build_url }}'
-    dest: '{{ node_build_path }}'
-  when: nodenv_exists.stdout != "true"
+  - name: Clone nodenv
+    git:
+      repo: '{{ nodenv_url }}'
+      dest: '{{ nodenv_path }}'
+      accept_hostkey: yes
+
+  - name: Compile dynamic bash extension to speed up nodenv
+    shell: '{{ nodenv_path }}/src/configure && make -C {{ nodenv_path }}/src'
+
+  - name: Clone node-build
+    git:
+      repo: '{{ node_build_url }}'
+      dest: '{{ node_build_path }}'
+
+  when: nodenv_bin_dir.stat.exists == false

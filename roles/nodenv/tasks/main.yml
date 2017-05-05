@@ -1,33 +1,10 @@
-- name: Check for previous installation
-  shell: '[ -d {{ nodenv_path }} ] && [ -d {{ node_build_path }} ] && echo true'
-  ignore_errors: true
-  register: nodenv_exists
-
-- name: Create base directory
-  file:
-    path: '{{ nodenv_path }}'
-    state: directory
-    group: '{{ remote_user }}'
-    owner: '{{ remote_user }}'
-  become: true
-  when: nodenv_exists.stdout != "true"
-
+---
 - include: dependencies/debian.yml
+  when: ansible_os_family == 'Debian'
 
 - include: dependencies/centos.yml
-
-- name: Check for {{ node_version }}
-  shell: ls {{ nodenv_path }}/versions | grep {{ node_version }}
-  register: check_node
-  ignore_errors: yes
+  when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon"
 
 - include: install-nodenv.yml
-
-- name: Add nodenv to PATH
-  template:
-    src: nodenv.sh.j2
-    dest: /etc/profile.d/nodenv.sh
-    mode: a+x
-  become: true
 
 - include: install-node.yml

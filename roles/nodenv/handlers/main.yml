@@ -1,2 +1,3 @@
+---
 - name: rehash
-  shell: 'NODENV_ROOT={{ nodenv_path }} {{ nodenv_path }}/bin/nodenv rehash'
+  raw: 'NODENV_ROOT={{ nodenv_path }} {{ nodenv_path }}/bin/nodenv rehash'
