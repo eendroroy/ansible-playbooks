@@ -1,5 +1,4 @@
 ---
-
 - name: Check for {{ python_version }}
   stat:
     path: '{{ pyenv_path }}/versions/{{ python_version }}'
