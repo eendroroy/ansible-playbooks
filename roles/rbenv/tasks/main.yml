@@ -1,29 +1,9 @@
-- name: Check for previous installation
-  shell: '[ -d {{ rbenv_path }} ] && [ -d {{ ruby_build_path }} ] && echo true'
-  ignore_errors: true
-  register: rbenv_exists
-
-- name: Create base directory
-  file:
-    path: '{{ rbenv_path }}'
-    state: directory
-    group: '{{ remote_user }}'
-    owner: '{{ remote_user }}'
-  become: true
-  when: rbenv_exists.stdout != "true"
-
+---
 - include: dependencies/debian.yml
-  when: rbenv_exists.stdout != "true" and ansible_os_family == 'Debian'
+  when: ansible_os_family == 'Debian'
 
 - include: dependencies/centos.yml
-  when: >
-    rbenv_exists.stdout != "true"
-    and ( ansible_distribution == "CentOS" or ansible_distribution == "Amazon" )
-
-- name: Check for {{ ruby_version }}
-  shell: ls {{ rbenv_path }}/versions | grep {{ ruby_version }}
-  register: check_ruby
-  ignore_errors: yes
+  when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon"
 
 - include: install-rbenv.yml
 
@@ -31,17 +11,8 @@
 
 - include: plugins/rbenv-default-gems.yml
 
-- name: Add rbenv to PATH
-  template:
-    src: rbenv.sh.j2
-    dest: /etc/profile.d/rbenv.sh
-    owner: root
-    group: root
-    mode: 0775
-  become: true
-
 - include: install-ruby.yml
 
 - name: Make sure bundler is installed
-  shell: 'RBENV_ROOT={{ rbenv_path }} RBENV_VERSION={{ ruby_version }} {{ rbenv_path }}/bin/rbenv exec gem install bundler'
+  raw: 'RBENV_ROOT={{ rbenv_path }} RBENV_VERSION={{ ruby_version }} {{ rbenv_path }}/bin/rbenv exec gem install bundler'
   become: true
