@@ -1,11 +1,11 @@
 remote_user: ubuntu
 remote_home: /home/ubuntu
 
-ruby_version: 2.4.0
+ruby_version: 2.4.1
 python_version: 2.7.13
-node_version: 7.7.4
+node_version: 8.1.0
 
-app_name: application
+app_name: flxpay
 
 deploy_user: deployer
 deploy_home: /home/{{ deploy_user }}
