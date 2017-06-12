@@ -5,7 +5,7 @@ ruby_version: 2.4.1
 python_version: 2.7.13
 node_version: 8.1.0
 
-app_name: flxpay
+app_name: application
 
 deploy_user: deployer
 deploy_home: /home/{{ deploy_user }}
