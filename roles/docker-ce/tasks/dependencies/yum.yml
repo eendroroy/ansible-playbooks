@@ -1,0 +1,30 @@
+---
+- name: Install dependencies for CenoOS
+  yum:
+    name: '{{ item }}'
+    state: installed
+    update_cache: yes
+  with_items:
+      - yum-utils
+      - device-mapper-persistent-data
+      - lvm2
+  become: true
+
+- name: Remove previous installation
+  yum:
+    name: '{{ item }}'
+    state: removed
+    update_cache: yes
+  with_items:
+      - docker
+      - docker-common
+      - docker-selinux
+      - docker-engine
+  become: true
+
+  - name: Add docker repository
+    yum_repository:
+      name: docker
+      description: docker YUM repo
+      baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+      enabled: yes
