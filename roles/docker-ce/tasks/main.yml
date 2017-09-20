@@ -15,6 +15,7 @@
   with_items:
       - docker-ce
   become: true
+  notify: restart docker
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Install docker-ce YUM
@@ -27,4 +28,5 @@
   with_items:
       - docker-ce
   become: true
+  notify: restart docker
   when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon" or ansible_distribution == 'Red Hat Enterprise Linux'
