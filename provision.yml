@@ -17,3 +17,4 @@
     - nginx
     - mysql
     - postgres
+    - docker-ce
